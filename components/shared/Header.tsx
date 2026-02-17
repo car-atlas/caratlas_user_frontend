@@ -6,6 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Menu, X, User, History, Heart, LogOut } from "lucide-react"
 import { useUser } from "@/contexts/UserContext"
+import { useChat } from "@/contexts/ChatContext"
 import UserLoginModal from "@/components/user/UserLoginModal"
 
 export default function Header() {
@@ -15,6 +16,7 @@ export default function Header() {
   const pathname = usePathname()
   const isSearchPage = pathname?.startsWith("/search")
   const { user, logout } = useUser()
+  const { openChat } = useChat()
 
   return (
     <header className="sticky top-0 z-[100] w-full bg-primary border-b border-primary/30 shadow-sm">
@@ -43,6 +45,13 @@ export default function Header() {
             </Link>
           ) : (
             <>
+              <button
+                type="button"
+                onClick={openChat}
+                className="text-white/90 hover:text-white transition-colors font-semibold text-sm uppercase tracking-wide hover:underline underline-offset-4"
+              >
+                Chat
+              </button>
               <Link
                 href="/search"
                 className="text-white/90 hover:text-white transition-colors font-semibold text-sm uppercase tracking-wide hover:underline underline-offset-4"
@@ -71,7 +80,6 @@ export default function Header() {
                 className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white font-semibold px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all text-sm"
               >
                 <User size={18} />
-                <span className="hidden sm:inline">{user.phone}</span>
               </button>
               {userMenuOpen && (
                 <>

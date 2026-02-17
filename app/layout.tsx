@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { LocationProvider } from "@/contexts/LocationContext"
 import { UserProvider } from "@/contexts/UserContext"
+import { ChatProvider } from "@/contexts/ChatContext"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -37,7 +38,9 @@ export default function RootLayout({
       <body className={`font-sans antialiased`}>
         <LocationProvider>
           <UserProvider>
-            {children}
+            <ChatProvider>
+              {children}
+            </ChatProvider>
           </UserProvider>
         </LocationProvider>
         <Analytics />

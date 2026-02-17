@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { searchAPI, CarListing } from "@/lib/api"
 import { Car, Loader2, Image as ImageIcon } from "lucide-react"
 import { useLocation } from "@/contexts/LocationContext"
@@ -14,38 +14,43 @@ export default function MostPopularCars() {
   const [popularCars, setPopularCars] = useState<CarListing[]>([])
   const [loading, setLoading] = useState(true)
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
+  const hasLoadedOnce = useRef(false)
 
   const city = location?.city || "Delhi"
 
   useEffect(() => {
-    loadPopularCars()
-  }, [city])
-
-  const loadPopularCars = async () => {
-    try {
-      setLoading(true)
-      const response = await searchAPI.search({
-        page: "1",
-        limit: "4",
-        city,
-        sortBy: "price_asc" as const,
-      })
-      setPopularCars(response.listings || [])
-    } catch (error) {
-      console.error("Error loading popular cars:", error)
-    } finally {
-      setLoading(false)
+    let cancelled = false
+    if (!hasLoadedOnce.current) setLoading(true)
+    const run = async () => {
+      try {
+        const response = await searchAPI.search({
+          page: "1",
+          limit: "4",
+          city,
+          sortBy: "price_asc" as const,
+        })
+        if (!cancelled) {
+          setPopularCars(response.listings || [])
+          hasLoadedOnce.current = true
+        }
+      } catch (error) {
+        if (!cancelled) setPopularCars([])
+        console.error("Error loading popular cars:", error)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
     }
-  }
+    run()
+    return () => { cancelled = true }
+  }, [city])
 
   const handleCarClick = (car: CarListing) => {
     router.push(`/search/${car.id}`)
   }
 
-  // Get car image URL - use images from API if available and not errored, otherwise null for placeholder
   const getCarImage = (car: CarListing): string | null => {
     if (imageErrors.has(car.id)) {
-      return null // Image failed to load, show placeholder
+      return null 
     }
     if (car.images && car.images.length > 0 && car.images[0]) {
       return car.images[0]

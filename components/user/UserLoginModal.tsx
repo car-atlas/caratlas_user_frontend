@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X, Loader2 } from "lucide-react"
 import { useUser } from "@/contexts/UserContext"
 
@@ -18,6 +18,20 @@ export default function UserLoginModal({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
+  const [otpSentAt, setOtpSentAt] = useState<number | null>(null)
+  const [resendCountdown, setResendCountdown] = useState(0)
+
+  useEffect(() => {
+    if (otpSentAt === null) return
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - otpSentAt
+      const remaining = Math.max(10000 - elapsed, 0)
+      setResendCountdown(Math.ceil(remaining / 1000))
+    }, 500)
+
+    return () => clearInterval(interval)
+  }, [otpSentAt])
+
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -26,6 +40,7 @@ export default function UserLoginModal({
     setLoading(false)
     if (result.success) {
       setStep("otp")
+      setOtpSentAt(Date.now()) 
     } else {
       setError(result.error || "Failed to send OTP")
     }
@@ -38,10 +53,7 @@ export default function UserLoginModal({
     const result = await login(phone, otp)
     setLoading(false)
     if (result.success) {
-      onClose()
-      setStep("phone")
-      setPhone("")
-      setOtp("")
+      handleClose()
     } else {
       setError(result.error || "Invalid OTP")
     }
@@ -52,8 +64,23 @@ export default function UserLoginModal({
     setPhone("")
     setOtp("")
     setError("")
+    setOtpSentAt(null)
+    setResendCountdown(0)
     onClose()
   }
+
+  const handleResendOtp = async () => {
+    setLoading(true)
+    const result = await sendOtp(phone)
+    setLoading(false)
+    if (result.success) {
+      setStep("otp")
+      setOtpSentAt(Date.now()) 
+    } else {
+      setError(result.error || "Failed to send OTP")
+    }
+  }
+  const timeSince = (sentAt: number) => Date.now() - sentAt
 
   if (!open) return null
 
@@ -75,7 +102,9 @@ export default function UserLoginModal({
         {step === "phone" ? (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Phone number</label>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Phone number
+              </label>
               <input
                 type="tel"
                 value={phone}
@@ -100,22 +129,44 @@ export default function UserLoginModal({
               OTP sent to {phone}. Enter the code below.
             </p>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">OTP</label>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                OTP
+              </label>
               <input
                 type="text"
                 inputMode="numeric"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 8))
+                }
                 placeholder="Enter 4–8 digit OTP"
                 className="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-ring focus:border-ring bg-background text-foreground"
                 required
               />
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
+
+            <div className="text-sm text-muted-foreground">
+              {otpSentAt !== null && resendCountdown === 0 ? (
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  className="text-primary hover:underline"
+                >
+                  Resend OTP
+                </button>
+              ) : otpSentAt !== null ? (
+                <span>Resend in {resendCountdown}s</span>
+              ) : null}
+            </div>
+
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => { setStep("phone"); setError(""); }}
+                onClick={() => {
+                  setStep("phone")
+                  setError("")
+                }}
                 className="flex-1 py-3 rounded-xl border border-border text-foreground font-medium hover:bg-muted"
               >
                 Back

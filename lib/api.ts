@@ -136,6 +136,16 @@ export const searchAPI = {
       throw error
     }
   },
+
+  getListingsByIds: async (ids: string[]): Promise<CarListing[]> => {
+    if (!ids?.length) return []
+    try {
+      const response = await api.get(endpoints.listingsByIds(ids))
+      return response.data?.listings ?? []
+    } catch (error) {
+      return []
+    }
+  },
   
   getBrands: async (city?: string): Promise<string[]> => {
     try {
