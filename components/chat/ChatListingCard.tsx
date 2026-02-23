@@ -20,21 +20,21 @@ export default function ChatListingCard({ car }: ChatListingCardProps) {
   return (
     <Link
       href={href}
-      className="flex gap-3 p-3 rounded-xl bg-card border border-border hover:border-primary/50 hover:shadow-md transition-all w-[280px] sm:w-[300px] shrink-0"
+      className="flex gap-3 p-3 rounded-xl bg-card border border-border hover:border-primary/40 hover:shadow-md transition-all w-[260px] sm:w-[280px] shrink-0"
     >
-      <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted shrink-0">
+      <div className="w-[72px] h-[72px] rounded-xl overflow-hidden bg-muted shrink-0">
         {imageList[0] ? (
           <img src={imageList[0]} alt={`${car.brand} ${car.model}`} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <ImageIcon size={24} className="text-muted-foreground" />
+            <ImageIcon size={22} className="text-muted-foreground" />
           </div>
         )}
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="font-semibold text-foreground truncate">{car.brand} {car.model}</p>
+      <div className="min-w-0 flex-1 py-0.5">
+        <p className="font-semibold text-foreground text-sm truncate">{car.brand} {car.model}</p>
         {car.variant && <p className="text-xs text-muted-foreground truncate">{car.variant}</p>}
-        <p className="text-sm font-medium text-primary mt-0.5">{priceStr}</p>
+        <p className="text-sm font-semibold text-primary mt-1">{priceStr}</p>
         {(car.city || car.year) && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
             {car.year && <span>{car.year}</span>}

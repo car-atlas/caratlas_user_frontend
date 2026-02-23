@@ -1,29 +1,20 @@
 import Hero from "@/components/public/Hero"
-import MostPopularCars from "@/components/public/MostPopularCars"
-import BrowseByType from "@/components/public/BrowseByType"
-import AboutSection from "@/components/public/AboutSection"
-import HowItWorksSection from "@/components/public/HowItWorksSection"
+import TraditionalSearch from "@/components/public/TraditionalSearch"
+import AtlasFeatures from "@/components/public/AtlasFeatures"
+import HowAtlasWorks from "@/components/public/HowAtlasWorks"
+import FeaturedCars from "@/components/public/FeaturedCars"
+import PopularBrands from "@/components/public/PopularBrands"
 import FAQSection from "@/components/public/FAQSection"
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Hero Section with Search */}
       <Hero />
-      
-      {/* Most Popular Cars */}
-      <MostPopularCars />
-      
-      {/* Browse by Type - Car Types */}
-      <BrowseByType />
-      
-      {/* About Section */}
-      <AboutSection />
-      
-      {/* How It Works Section */}
-      <HowItWorksSection />
-      
-      {/* FAQ Section */}
+      <TraditionalSearch />
+      <AtlasFeatures />
+      <HowAtlasWorks />
+      <FeaturedCars />
+      <PopularBrands />
       <FAQSection />
     </main>
   )

@@ -1,10 +1,14 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { MessageCircle } from "lucide-react"
 import { useChat } from "@/contexts/ChatContext"
 
 export default function ChatFloatingButton() {
+  const pathname = usePathname()
   const { openChat } = useChat()
+
+  if (pathname === "/") return null
 
   return (
     <button

@@ -38,6 +38,12 @@
   --sky-light: #e0f2fe;
   --sky-border: #bae6fd;
   --sky-accent: #03C5F8;
+  /* Atlas design (Used Car Metasearch Homepage) */
+  --atlas-cyan: #00BFFF;
+  --atlas-navy: #1E3A5F;
+  --atlas-navy-dark: #0D2847;
+  --atlas-green: #00FF87;
+  --atlas-green-dark: #00CC6F;
 }
 
 .dark {
@@ -165,11 +171,26 @@
     }
   }
 
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .animate-fade-in {
     animation: fade-in 0.3s ease-out;
   }
 
   .animate-scale-in {
     animation: scale-in 0.3s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
   }
 }
